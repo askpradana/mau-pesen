@@ -1,0 +1,23 @@
+server:
+  port: 8080
+
+database:
+  host: localhost
+  user: postgres
+  password: postgres
+  name: mau_pesen
+  port: 5432
+  sslmode: disable
+
+redis:
+  addr: "localhost:6379"
+
+jwt:
+  secret: "mau-booking-apapun-disini-terbaik-dunia-akhirat"
+
+admin:
+  register_secret: "secret_key_milik_hevenly_demon_cheon_ma"
+
+googlecalendar:
+  serviceaccountfile: "/secrets/service-account.json"
+  calendarid: "primary"
