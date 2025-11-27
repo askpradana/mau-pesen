@@ -12,7 +12,8 @@ import (
 func AdminCreateConsultant(uc *usecase.AdminUsecase) http.HandlerFunc {
 	return func(w http.ResponseWriter, reqW *http.Request) {
 		var req struct {
-			UserID     string `json:"user_id"`
+			Name       string `json:"name"`
+			Phone      string `json:"phone"`
 			Speciality string `json:"speciality"`
 			Bio        string `json:"bio"`
 			Price      int    `json:"price"`
@@ -21,7 +22,7 @@ func AdminCreateConsultant(uc *usecase.AdminUsecase) http.HandlerFunc {
 			common.BadRequest(w, "Invalid JSON")
 			return
 		}
-		if err := uc.CreateConsultant(req.UserID, req.Speciality, req.Bio, req.Price); err != nil {
+		if err := uc.CreateConsultant(req.Name, req.Phone, req.Speciality, req.Bio, req.Price); err != nil {
 			common.BadRequest(w, err.Error())
 			return
 		}

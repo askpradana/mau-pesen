@@ -25,13 +25,14 @@ func main() {
 	googlecalendar.NewClient()
 
 	repos := repository.NewRepositories(database.DB)
+	authUseCase := usecase.NewAuthUsecase(repos)
 	uc := &usecase.Usecases{
 		Auth:       usecase.NewAuthUsecase(repos),
 		Consultant: usecase.NewConsultantUsecase(repos),
 		Slot:       usecase.NewSlotUsecase(repos),
 		Booking:    usecase.NewBookingUsecase(repos),
 		Rating:     usecase.NewRatingUsecase(repos),
-		Admin:      usecase.NewAdminUsecase(repos),
+		Admin:      usecase.NewAdminUsecase(repos, authUseCase),
 	}
 
 	r := chi.NewRouter()

@@ -11,6 +11,10 @@ type ConsultantWithUser struct {
 	User entity.User `gorm:"foreignKey:UserID;references:ID"`
 }
 
+func (ConsultantWithUser) TableName() string {
+	return "consultants"
+}
+
 type ConsultantRepository interface {
 	Create(c *entity.Consultant) error
 	FindByUserID(userID string) (*entity.Consultant, error)

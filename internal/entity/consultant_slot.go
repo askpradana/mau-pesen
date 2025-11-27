@@ -11,5 +11,5 @@ type ConsultantSlot struct {
 	Available    bool      `gorm:"default:true"`
 	CreatedAt    time.Time `gorm:"autoCreateTime"`
 
-	User User `gorm:"foreignKey:UserID;references:ID"`
+	Consultant User `gorm:"foreignKey:ConsultantID;references:ID"`
 }

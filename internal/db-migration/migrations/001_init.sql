@@ -13,6 +13,8 @@ CREATE TABLE IF NOT EXISTS users (
 -- Consultants (terpisah, lengkap)
 CREATE TABLE IF NOT EXISTS consultants (
     user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+    name TEXT,
+    phone TEXT UNIQUE NOT NULL,
     speciality TEXT,
     bio TEXT,
     rating_avg NUMERIC(3,2) DEFAULT 0,

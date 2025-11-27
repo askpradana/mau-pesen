@@ -11,28 +11,39 @@ type AdminUsecase struct {
 	consultantRepo repository.ConsultantRepository
 	bookingRepo    repository.BookingRepository
 	logRepo        repository.LogRepository
+	authUseCase    *AuthUsecase
 }
 
-func NewAdminUsecase(repos *repository.Repositories) *AdminUsecase {
+func NewAdminUsecase(repos *repository.Repositories, auth *AuthUsecase) *AdminUsecase {
 	return &AdminUsecase{
 		userRepo:       repos.User,
 		consultantRepo: repos.Consultant,
 		bookingRepo:    repos.Booking,
 		logRepo:        repos.Log,
+		authUseCase:    auth,
 	}
 }
 
 // 1. Create Consultant
-func (a *AdminUsecase) CreateConsultant(userID, speciality, bio string, price int) error {
-	user, err := a.userRepo.FindByID(userID)
-	if err != nil || user.Role != "client" {
-		return fmt.Errorf("user tidak ditemukan atau sudah punya role")
+func (a *AdminUsecase) CreateConsultant(name, phone, speciality, bio string, price int) error {
+
+	auth, err := a.authUseCase.RegisterClient(name, phone)
+	//user, err := a.userRepo.FindByID(auth.Phone)
+	//if err != nil || user.Role != "client" {
+	//	return fmt.Errorf("user tidak ditemukan atau sudah punya role")
+	//}
+
+	if err != nil {
+		return fmt.Errorf("user already exists")
 	}
-	user.Role = "consultant"
-	a.userRepo.Update(user)
+
+	auth.Role = "consultant"
+	a.userRepo.Update(auth)
 
 	consultant := &entity.Consultant{
-		UserID:     userID,
+		UserID:     auth.ID,
+		Name:       name,
+		Phone:      phone,
 		Speciality: speciality,
 		Bio:        bio,
 		Price:      price,

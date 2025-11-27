@@ -27,7 +27,9 @@ func (r *slotRepo) CreateBatch(slots []*entity.ConsultantSlot) error {
 
 func (r *slotRepo) GetAvailable(consultantID, date string) ([]entity.ConsultantSlot, error) {
 	var slots []entity.ConsultantSlot
-	err := r.db.Where("consultant_id = ? AND date = ? AND available = true", consultantID, date).
+	err := r.db.
+		Preload("Consultant").
+		Where("consultant_id = ? AND date = ? AND available = true", consultantID, date).
 		Order("hour ASC").Find(&slots).Error
 	return slots, err
 }
