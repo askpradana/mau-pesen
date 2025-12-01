@@ -25,9 +25,9 @@ func NewAdminUsecase(repos *repository.Repositories, auth *AuthUsecase) *AdminUs
 }
 
 // 1. Create Consultant
-func (a *AdminUsecase) CreateConsultant(name, phone, speciality, bio string, price int) error {
+func (a *AdminUsecase) CreateConsultant(name, phone, email, speciality, bio string, price int) error {
 
-	auth, err := a.authUseCase.RegisterClient(name, phone)
+	auth, err := a.authUseCase.RegisterClient(name, phone, email)
 	//user, err := a.userRepo.FindByID(auth.Phone)
 	//if err != nil || user.Role != "client" {
 	//	return fmt.Errorf("user tidak ditemukan atau sudah punya role")
@@ -44,6 +44,7 @@ func (a *AdminUsecase) CreateConsultant(name, phone, speciality, bio string, pri
 		UserID:     auth.ID,
 		Name:       name,
 		Phone:      phone,
+		Email:      email,
 		Speciality: speciality,
 		Bio:        bio,
 		Price:      price,

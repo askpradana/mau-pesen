@@ -12,9 +12,10 @@ func RegisterClient(uc *usecase.AuthUsecase) http.HandlerFunc {
 		var req struct {
 			Name  string `json:"name"`
 			Phone string `json:"phone"`
+			Email string `json:"email"`
 		}
 		json.NewDecoder(r.Body).Decode(&req)
-		user, err := uc.RegisterClient(req.Name, req.Phone)
+		user, err := uc.RegisterClient(req.Name, req.Phone, req.Email)
 		if err != nil {
 			common.BadRequest(w, err.Error())
 			return
@@ -28,10 +29,11 @@ func RegisterAdmin(uc *usecase.AuthUsecase) http.HandlerFunc {
 		var req struct {
 			Name   string `json:"name"`
 			Phone  string `json:"phone"`
+			Email  string `json:"email"`
 			Secret string `json:"secret"`
 		}
 		json.NewDecoder(r.Body).Decode(&req)
-		if err := uc.RegisterAdmin(req.Name, req.Phone, req.Secret); err != nil {
+		if err := uc.RegisterAdmin(req.Name, req.Phone, req.Email, req.Secret); err != nil {
 			common.Forbidden(w, "error create admin")
 			return
 		}

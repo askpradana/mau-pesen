@@ -14,6 +14,7 @@ func AdminCreateConsultant(uc *usecase.AdminUsecase) http.HandlerFunc {
 		var req struct {
 			Name       string `json:"name"`
 			Phone      string `json:"phone"`
+			Email      string `json:"email"`
 			Speciality string `json:"speciality"`
 			Bio        string `json:"bio"`
 			Price      int    `json:"price"`
@@ -22,7 +23,7 @@ func AdminCreateConsultant(uc *usecase.AdminUsecase) http.HandlerFunc {
 			common.BadRequest(w, "Invalid JSON")
 			return
 		}
-		if err := uc.CreateConsultant(req.Name, req.Phone, req.Speciality, req.Bio, req.Price); err != nil {
+		if err := uc.CreateConsultant(req.Name, req.Phone, req.Email, req.Speciality, req.Bio, req.Price); err != nil {
 			common.BadRequest(w, err.Error())
 			return
 		}

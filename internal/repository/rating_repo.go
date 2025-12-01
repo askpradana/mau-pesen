@@ -8,6 +8,7 @@ import (
 
 type RatingRepository interface {
 	Create(rating *entity.Rating) error
+	ExistsByBookingID(bookingID string) (bool, error)
 	UpdateConsultantAvg(bookingID string) error
 }
 
@@ -21,6 +22,19 @@ func NewRatingRepository(db *gorm.DB) RatingRepository {
 
 func (r *ratingRepo) Create(rating *entity.Rating) error {
 	return r.db.Create(rating).Error
+}
+
+func (r *ratingRepo) ExistsByBookingID(bookingID string) (bool, error) {
+	var count int64
+	err := r.db.Model(&entity.Rating{}).
+		Where("booking_id = ?", bookingID).
+		Count(&count).Error
+
+	if err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
 }
 
 func (r *ratingRepo) UpdateConsultantAvg(bookingID string) error {

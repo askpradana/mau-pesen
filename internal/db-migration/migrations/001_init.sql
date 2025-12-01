@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS consultants (
     user_id UUID PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
     name TEXT,
     phone TEXT UNIQUE NOT NULL,
+    email TEXT UNIQUE NOT NULL,
     speciality TEXT,
     bio TEXT,
     rating_avg NUMERIC(3,2) DEFAULT 0,
@@ -55,8 +56,9 @@ CREATE TABLE IF NOT EXISTS bookings (
     purpose TEXT,
     status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected', 'cancelled')),
     google_event_id TEXT,
+    reject_reason TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW(),
-    update_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
     UNIQUE (consultant_id, date, hour)
 );
 
@@ -69,7 +71,7 @@ CREATE TABLE IF NOT EXISTS session_notes (
 
 CREATE TABLE IF NOT EXISTS ratings (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    booking_id UUID NOT NULL REFERENCES bookings(id) ON DELETE CASCADE,
+    booking_id TEXT NOT NULL REFERENCES bookings(booking_id) ON DELETE CASCADE,
     client_id UUID NOT NULL REFERENCES users(id),
     rating INT CHECK (rating BETWEEN 1 AND 5),
     message TEXT,

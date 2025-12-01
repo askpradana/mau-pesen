@@ -31,11 +31,12 @@ type LoginResponse struct {
 	UserID       string `json:"user_id"`
 	Name         string `json:"name"`
 	Phone        string `json:"phone"`
+	Email        string `json:"email"`
 	Role         string `json:"role"`
 }
 
 // Register Client Biasa
-func (u *AuthUsecase) RegisterClient(name, phone string) (*entity.User, error) {
+func (u *AuthUsecase) RegisterClient(name, phone, email string) (*entity.User, error) {
 	// Cek apakah phone sudah terdaftar
 	if _, err := u.userRepo.FindByPhone(phone); err == nil {
 		return nil, fmt.Errorf("nomor sudah terdaftar")
@@ -44,6 +45,7 @@ func (u *AuthUsecase) RegisterClient(name, phone string) (*entity.User, error) {
 	user := &entity.User{
 		Name:  name,
 		Phone: phone,
+		Email: email,
 		Role:  "client",
 	}
 
@@ -55,6 +57,7 @@ func (u *AuthUsecase) RegisterClient(name, phone string) (*entity.User, error) {
 	u.logRepo.Create(nil, "user_registered", map[string]interface{}{
 		"user_id": user.ID,
 		"phone":   phone,
+		"email":   email,
 		"role":    "client",
 	})
 
@@ -62,7 +65,7 @@ func (u *AuthUsecase) RegisterClient(name, phone string) (*entity.User, error) {
 }
 
 // Register Admin (hanya via secret)
-func (u *AuthUsecase) RegisterAdmin(name, phone, secret string) error {
+func (u *AuthUsecase) RegisterAdmin(name, phone, email, secret string) error {
 	if secret != config.C.Admin.RegisterSecret {
 		return fmt.Errorf("secret salah")
 	}
@@ -70,6 +73,7 @@ func (u *AuthUsecase) RegisterAdmin(name, phone, secret string) error {
 	user := &entity.User{
 		Name:  name,
 		Phone: phone,
+		Email: email,
 		Role:  "admin",
 	}
 	return u.userRepo.Create(user)
@@ -108,7 +112,7 @@ func (u *AuthUsecase) VerifyOTP(phone, code string) (*LoginResponse, error) {
 	user, err := u.userRepo.FindByPhone(phone)
 	if err != nil {
 		// Auto register kalau belum ada (optional)
-		user, _ = u.RegisterClient("User "+phone[6:], phone)
+		user, _ = u.RegisterClient("User "+phone[6:], phone, "user@example.com")
 	}
 
 	if user.Role == "banned" {
@@ -133,6 +137,7 @@ func (u *AuthUsecase) VerifyOTP(phone, code string) (*LoginResponse, error) {
 		UserID:       user.ID,
 		Name:         user.Name,
 		Phone:        user.Phone,
+		Email:        user.Email,
 		Role:         user.Role,
 	}, nil
 }

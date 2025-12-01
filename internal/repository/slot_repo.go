@@ -37,7 +37,7 @@ func (r *slotRepo) GetAvailable(consultantID, date string) ([]entity.ConsultantS
 func (r *slotRepo) LockAndBook(tx *gorm.DB, slotID string) (*entity.ConsultantSlot, error) {
 	var slot entity.ConsultantSlot
 	err := tx.Clauses(clause.Locking{Strength: "UPDATE"}).
-		Where("id = ? AND available = true").
+		Where("slot_id = ? AND available = true", slotID).
 		First(&slot).Error
 	if err != nil {
 		return nil, err

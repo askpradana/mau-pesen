@@ -35,7 +35,7 @@ func Created(w http.ResponseWriter, msg string, data interface{}) {
 	w.WriteHeader(http.StatusCreated)
 
 	res := Response{
-		Success: false,
+		Success: true,
 		Message: msg,
 		Data:    nil,
 	}

@@ -8,7 +8,7 @@ import (
 
 type BookingRepository interface {
 	Create(tx *gorm.DB, b *entity.Booking) error
-	FindByID(id string) (*entity.Booking, error)
+	FindByBookID(id string) (*entity.Booking, error)
 	Update(tx *gorm.DB, b *entity.Booking) error
 	ListAll() ([]entity.Booking, error)
 }
@@ -25,9 +25,9 @@ func (r *bookingRepo) Create(tx *gorm.DB, b *entity.Booking) error {
 	return tx.Create(b).Error
 }
 
-func (r *bookingRepo) FindByID(id string) (*entity.Booking, error) {
+func (r *bookingRepo) FindByBookID(bookId string) (*entity.Booking, error) {
 	var b entity.Booking
-	err := r.db.Preload("Client").Preload("Consultant").First(&b, "id = ?", id).Error
+	err := r.db.Preload("Client").Preload("Consultant").Preload("Slot").First(&b, "booking_id = ?", bookId).Error
 	return &b, err
 }
 

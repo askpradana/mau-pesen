@@ -36,9 +36,9 @@ func (u *BookingUsecase) Create(clientID, slotID, purpose string) (string, error
 		bookingID = fmt.Sprintf("BOOK-%s", time.Now().Format("20060102150405"))
 		booking := &entity.Booking{
 			BookingID:    bookingID,
-			ClientID:     &clientID,
-			ConsultantID: &slot.ConsultantID,
-			SlotID:       &slot.ID,
+			ClientID:     clientID,
+			ConsultantID: slot.ConsultantID,
+			SlotID:       slot.ID,
 			Date:         slot.Date,
 			Hour:         slot.Hour,
 			Purpose:      purpose,
@@ -54,9 +54,13 @@ func (u *BookingUsecase) Create(clientID, slotID, purpose string) (string, error
 
 func (u *BookingUsecase) Approve(bookingID string) error {
 	return u.db.Transaction(func(tx *gorm.DB) error {
-		b, err := u.bookingRepo.FindByID(bookingID)
-		if err != nil || b.Status != entity.Pending {
-			return fmt.Errorf("booking tidak valid")
+		b, err := u.bookingRepo.FindByBookID(bookingID)
+		if err != nil {
+			return fmt.Errorf("booking not found")
+		}
+
+		if b.Status != entity.Pending {
+			return fmt.Errorf("booking invalid")
 		}
 		//_, _, err := googlecalendar.CreateEvent(*b.ConsultantID, "Konsultasi", b.Purpose, b.Date, b.Hour)
 		if err != nil {
@@ -71,9 +75,13 @@ func (u *BookingUsecase) Approve(bookingID string) error {
 
 func (u *BookingUsecase) Reject(bookingID, reason string) error {
 	return u.db.Transaction(func(tx *gorm.DB) error {
-		b, err := u.bookingRepo.FindByID(bookingID)
-		if err != nil || b.Status != entity.Pending {
-			return fmt.Errorf("booking tidak valid")
+		b, err := u.bookingRepo.FindByBookID(bookingID)
+		if err != nil {
+			return fmt.Errorf("booking not found")
+		}
+
+		if b.Status != entity.Pending {
+			return fmt.Errorf("booking invalid")
 		}
 		b.Status = entity.Rejected
 		b.RejectReason = &reason

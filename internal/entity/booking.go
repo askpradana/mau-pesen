@@ -12,11 +12,18 @@ const (
 )
 
 type Booking struct {
-	ID            string        `gorm:"type:uuid;primaryKey;default:uuid_generate_v4()"`
-	BookingID     string        `gorm:"type:text;uniqueIndex;not null"`
-	ClientID      *string       `gorm:"type:uuid"`
-	ConsultantID  *string       `gorm:"type:uuid"`
-	SlotID        *string       `gorm:"type:uuid"`
+	ID        string `gorm:"type:uuid;primaryKey;default:uuid_generate_v4()"`
+	BookingID string `gorm:"type:text;uniqueIndex;not null"`
+
+	ClientID string `gorm:"type:uuid"`
+	Client   User   `gorm:"foreignKey:ClientID;references:ID"`
+
+	ConsultantID string `gorm:"type:uuid"`
+	Consultant   User   `gorm:"foreignKey:ConsultantID;references:ID"`
+
+	SlotID string         `gorm:"type:uuid"`
+	Slot   ConsultantSlot `gorm:"foreignKey:SlotID;references:ID"`
+
 	Date          string        `gorm:"type:date;not null"`
 	Hour          int           `gorm:"not null"`
 	Purpose       string        `gorm:"type:text"`

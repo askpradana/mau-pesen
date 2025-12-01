@@ -4,7 +4,7 @@ import "time"
 
 type ConsultantSlot struct {
 	ID           string    `gorm:"type:uuid;primaryKey;default:uuid_generate_v4()"`
-	SlotID       *string   `gorm:"type:text;uniqueIndex"`
+	SlotID       string    `gorm:"type:text;uniqueIndex;not null"`
 	ConsultantID string    `gorm:"type:uuid;not null"`
 	Date         string    `gorm:"type:date;not null"`
 	Hour         int       `gorm:"not null;check:hour >= 0 AND hour <= 23"`

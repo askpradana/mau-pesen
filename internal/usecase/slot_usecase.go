@@ -3,6 +3,8 @@ package usecase
 import (
 	"nfldyprdn/maupesen/internal/entity"
 	"nfldyprdn/maupesen/internal/repository"
+
+	"github.com/google/uuid"
 )
 
 type SlotUsecase struct {
@@ -17,12 +19,15 @@ func NewSlotUsecase(repos *repository.Repositories) *SlotUsecase {
 
 func (u *SlotUsecase) CreateBatch(consultantID, date string, startHour, endHour int) error {
 	var slots []*entity.ConsultantSlot
+
 	for h := startHour; h < endHour; h++ {
+		slotID := "slot_" + uuid.New().String()
 		slots = append(slots, &entity.ConsultantSlot{
 			ConsultantID: consultantID,
 			Date:         date,
 			Hour:         h,
 			Available:    true,
+			SlotID:       slotID,
 		})
 	}
 	return u.slotRepo.CreateBatch(slots)
