@@ -14,7 +14,7 @@ var DB *gorm.DB
 
 func Connect() error {
 	dsn := fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=%d sslmode=%s TimeZone=Asia/Jakarta",
+		"host=%s user=%s password=%s dbname=%s port=%d sslmode=%s timezone=Asia/Jakarta",
 		config.C.Database.Host,
 		config.C.Database.User,
 		config.C.Database.Password,

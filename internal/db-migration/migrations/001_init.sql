@@ -56,6 +56,7 @@ CREATE TABLE IF NOT EXISTS bookings (
     purpose TEXT,
     status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected', 'cancelled')),
     google_event_id TEXT,
+    meet_link TEXT,
     reject_reason TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW(),

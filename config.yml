@@ -7,7 +7,7 @@ database:
   password: postgres
   name: mau_pesen
   port: 5432
-  sslmode: disable
+  ssl_mode: disable
 
 redis:
   addr: "localhost:6379"
@@ -18,6 +18,6 @@ jwt:
 admin:
   register_secret: "secret_key_milik_hevenly_demon_cheon_ma"
 
-googlecalendar:
-  serviceaccountfile: "/secrets/service-account.json"
-  calendarid: "primary"
+google_calendar:
+  service_account_file: "internal/credentials/credentials.json"
+  calendar_id: "susanathena4@gmail.com"   # ganti jadi email psikolog yang mau dipake

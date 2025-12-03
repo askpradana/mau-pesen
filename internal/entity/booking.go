@@ -28,7 +28,8 @@ type Booking struct {
 	Hour          int           `gorm:"not null"`
 	Purpose       string        `gorm:"type:text"`
 	Status        BookingStatus `gorm:"type:text;default:'pending'"`
-	GoogleEventID *string
+	GoogleEventID *string       `gorm:"size:255" json:"google-event-id, omitempty"`
+	MeetLink      *string       `gorm:"size:500" json:"meet_link, omitempty"`
 	RejectReason  *string
 	CreatedAt     time.Time `gorm:"autoCreateTime"`
 	UpdatedAt     time.Time `gorm:"autoUpdateTime"`

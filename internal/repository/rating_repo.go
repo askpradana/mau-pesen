@@ -45,8 +45,8 @@ func (r *ratingRepo) UpdateConsultantAvg(bookingID string) error {
 				AVG(r.rating)::numeric(3,2) as avg_rating,
 				COUNT(r.id) as total
 			FROM ratings r
-			JOIN bookings b ON r.booking_id = b.id
-			WHERE b.id = ?
+			JOIN bookings b ON r.booking_id = b.booking_id
+			WHERE b.booking_id = ?
 			GROUP BY b.consultant_id
 		)
 		UPDATE consultants c

@@ -22,7 +22,9 @@ func main() {
 	config.Init()
 	database.Connect()
 	redis.InitClient()
-	googlecalendar.NewClient()
+	if err := googlecalendar.Init(); err != nil {
+		log.Fatal("Failed to init google calendar", err)
+	}
 
 	repos := repository.NewRepositories(database.DB)
 	authUseCase := usecase.NewAuthUsecase(repos)

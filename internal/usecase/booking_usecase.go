@@ -2,7 +2,9 @@ package usecase
 
 import (
 	"fmt"
+	"log"
 	"nfldyprdn/maupesen/internal/entity"
+	"nfldyprdn/maupesen/internal/external/googlecalendar"
 	"nfldyprdn/maupesen/internal/repository"
 	"time"
 
@@ -49,6 +51,7 @@ func (u *BookingUsecase) Create(clientID, slotID, purpose string) (string, error
 	if err == nil {
 		u.logRepo.Create(&clientID, "booking_created", map[string]any{"booking_id": bookingID})
 	}
+
 	return bookingID, err
 }
 
@@ -62,14 +65,46 @@ func (u *BookingUsecase) Approve(bookingID string) error {
 		if b.Status != entity.Pending {
 			return fmt.Errorf("booking invalid")
 		}
-		//_, _, err := googlecalendar.CreateEvent(*b.ConsultantID, "Konsultasi", b.Purpose, b.Date, b.Hour)
-		if err != nil {
+
+		var consultant entity.Consultant
+		if err := tx.Where("user_id = ?", b.ConsultantID).First(&consultant).Error; err != nil {
+			return fmt.Errorf("consultant not found")
+		}
+
+		var client entity.User
+		if err := tx.Where("id = ?", b.ClientID).First(&client).Error; err != nil {
+			return fmt.Errorf("client not found")
+		}
+
+		eventID, meetLink, calErr := googlecalendar.CreateEvent(
+			consultant.Email,
+			consultant.Name,
+			client.Name,
+			client.Email,
+			b.Purpose,
+			b.Date,
+			b.Hour)
+
+		if calErr != nil {
+			log.Printf("Failed google calendar (but booking still approved): %v", calErr)
+		} else {
+			b.GoogleEventID = &eventID
+			b.MeetLink = &meetLink
+		}
+
+		b.Status = entity.Approved
+		b.UpdatedAt = time.Now()
+
+		if err := u.bookingRepo.Update(tx, b); err != nil {
 			return err
 		}
-		b.Status = entity.Approved
-		//b.GoogleEventID = &eventID
-		// Simpan meet link di metadata atau kirim notif (nanti)
-		return u.bookingRepo.Update(tx, b)
+
+		u.logRepo.Create(&b.ClientID, "booking_approved", map[string]any{
+			"booking_id": bookingID,
+			"meet_link":  b.MeetLink,
+		})
+
+		return nil
 	})
 }
 
